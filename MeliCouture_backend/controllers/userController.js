@@ -2,7 +2,7 @@ import userModel from '../models/userModel.js'
 import validator from 'validator'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-
+import zxcvbn from 'zxcvbn';
 
 
 const createToken = (id) =>{
@@ -11,7 +11,52 @@ const createToken = (id) =>{
 
 // user login route 
 const loginUser = async (req, res) => {
-    res.json({msg:" user login working"})
+    try {
+        const {email,password} = req.body;
+
+        // mandatory fields validation
+        if (!email || !password) {
+            return res.status(400).json({
+                success: false,
+                message: "Email and password are required"
+            });
+        }
+
+        // check if user exist 
+        const user = await userModel.findOne({email})
+        if(!user){
+            return res.status(401).json({
+                success: false,
+                message: "a user with this email does not exist"
+            });
+        }
+        
+        // check if password is correct
+        const isMatch = await bcrypt.compare(password,user.password)
+
+        if (!isMatch) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid password"
+            });
+        }        
+
+        // token generation
+        const token = createToken(user._id);
+        return res.status(200).json({
+            success: true,
+            token,
+            userId: user._id 
+        });
+        
+        
+    } catch (error) {
+        console.error("Error logging in user:", error);
+        return res.status(500).json({
+            success: false,
+            message: "An error occurred while processing your request"
+        });
+    }
 }
 
 
@@ -67,11 +112,12 @@ const registerUser = async (req, res) => {
 
         // check if password is strong enough
 
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-        if (!passwordRegex.test(password)) {
+        const result = zxcvbn(password);
+        if (result.score < 3) {
             return res.status(400).json({
                 success: false,
-                message: "Password must include at least one uppercase letter, one number, and one special character."
+                message: result.feedback.warning,
+                suggestions: result.feedback.suggestions
             });
         }
 
