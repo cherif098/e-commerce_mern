@@ -12,4 +12,9 @@
 .bg-custom {
     background-color: #f1efe7;
 }
-  
+
+select,input,textarea{
+    border: 1px solid;
+    outline-color: #f1efe7 ;
+    border-radius: 4px;
+}
