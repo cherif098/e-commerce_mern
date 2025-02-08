@@ -20,6 +20,8 @@ const Add = ({ token }) => {
   const [bestseller, setBestseller] = useState(false);
   const [sizes, setSizes] = useState([]);
 
+
+
   const onSubmitHandler = async (e) => {
     e.preventDefault();
 
@@ -48,32 +50,28 @@ const Add = ({ token }) => {
       if (response.data.success) {
         toast.success(response.data.message);
         // Réinitialiser les champs du formulaire
-        setName(""); 
-        setDescription(""); 
-        setPrice(""); 
-        setCategory("Men"); 
-        setSubcategory("Topwear"); 
-        setBestseller(false); 
-        setSizes([]); 
-        setImage1(false); 
-        setImage2(false); 
-        setImage3(false); 
-        setImage4(false); 
-
+        setName("");
+        setDescription("");
+        setPrice("");
+        setCategory("Men");
+        setSubcategory("Topwear");
+        setBestseller(false);
+        setSizes([]);
+        setImage1(false);
+        setImage2(false);
+        setImage3(false);
+        setImage4(false);
       } else {
-        toast.response(response.data.message);
+        toast.error(response.data.message);
       }
     } catch (error) {
       console.error("Erreur lors de la soumission du formulaire :", error);
-      toast.error(error.message)
+      toast.error(error.message);
     }
   };
 
   return (
-    <form
-      onSubmit={onSubmitHandler}
-      className="flex flex-col w-full items-start gap-3"
-    >
+    <form onSubmit={onSubmitHandler} className="flex flex-col w-full  gap-3 ">
       <div>
         <p className="mb-2">Upload image</p>
 
@@ -301,7 +299,10 @@ const Add = ({ token }) => {
         </label>
       </div>
 
-      <button className="w-28 py-3 bg-[#c8bb8b] rounded-lg " type="submit">
+      <button
+        className="w-28 py-3 bg-[#c8bb8b] rounded-lg text-black "
+        type="submit"
+      >
         {" "}
         Add product{" "}
       </button>
