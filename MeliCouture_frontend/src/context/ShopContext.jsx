@@ -1,19 +1,23 @@
 import { createContext, useEffect, useState } from "react";
-import { products } from "../assets/assets";
+import axios from 'axios'
 import { toast } from "react-toastify";
 import {useNavigate} from 'react-router-dom';
 
 export const ShopContext = createContext();
 
 const ShopContextProvider = (props) => {
+  console.log("Backend URL from env:", import.meta.env.VITE_BACKEND_URL);
   const currency = "$";
   const shopName= "Melli Couture";
   const delivery_fee = 10;
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [cartItems, setCartItems] = useState({});
+  const [products,setProducts] = useState([])
   const navigate = useNavigate();
+
 
   const addToCart = (itemId, size) => {
     // Add item to cart when we select any prodcut
@@ -80,6 +84,34 @@ const ShopContextProvider = (props) => {
     return totalAmount;
   };
 
+  const getProductsData = async () => {
+    try {
+      const response = await axios.get(`${backendUrl}/api/product/listProduct`);
+      console.log("API response:", response);
+  
+      if (response.data.success) {
+        setProducts(response.data.products);
+      } else {
+        console.log("Full API response on failure:", response);
+        toast.error("Failed to fetch products: " + (response.data.message || "No error message provided"));
+      }
+    } catch (error) {
+      if (error.response) {
+        toast.error("API error: " + (error.response.data.message || error.response.statusText));
+      } else if (error.request) {
+        toast.error("No response received from the server.");
+      } else {
+        toast.error("Request setup error: " + error.message);
+      }
+    }
+  };
+
+  useEffect(()=>{
+    getProductsData()
+  },[])
+
+
+
   const value = {
     products,
     currency,
@@ -94,7 +126,8 @@ const ShopContextProvider = (props) => {
     getCartCount,
     updateQuantity,
     getCartAmount,
-    navigate
+    navigate,
+    backendUrl
   };
   return (
     <ShopContext.Provider value={value}>{props.children}</ShopContext.Provider>
