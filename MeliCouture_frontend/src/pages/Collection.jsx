@@ -74,7 +74,7 @@ const Collection = () => {
   // fonction pour afficher les produits
   useEffect(()=>{
     applyFilter();
-  },[category,subCategory,search,showSearch])
+  },[category,subCategory,search,showSearch,products])
 
   // fonction pour appler la fonction de tri par prix
   useEffect(()=>{

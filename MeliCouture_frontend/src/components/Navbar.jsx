@@ -5,8 +5,17 @@ import { ShopContext } from '../context/ShopContext'
 
 const Navbar = () => {
     const [visible, setVisible] = useState(false)
-    const { setShowSearch, getCartCount } = useContext(ShopContext)
+    const { setShowSearch, getCartCount,navigate,token,setToken,setCartItems } = useContext(ShopContext)
 
+    const logout = () => {
+        if (window.confirm('Are you sure you want to logout?')) {
+            navigate('/login');
+            localStorage.removeItem('token');
+            setToken('');
+            setCartItems({});
+            
+        }
+    };
     return (
         <div className='sticky top-0 z-50 bg-white/95 backdrop-blur-sm shadow-sm'>
             <div className='max-w-7xl mx-auto px-4 flex items-center justify-between py-4 font-medium'>
@@ -37,19 +46,27 @@ const Navbar = () => {
                     </button>
 
                     <div className='group relative'>
-                        <Link to='/login' className='p-2  rounded-full transition-colors'>
-                            <img className='w-5' src={assets.profile_icon} alt="Profile" />
-                        </Link>
+
+                        <img onClick={()=> token ? null : navigate('/login')} className='w-5' src={assets.profile_icon} alt="Profile" />
+                        {token &&                         
                         <div className='group-hover:block hidden absolute dropdown-menu right-0 pt-4'>
                             <div className='bg-white shadow-lg rounded-lg py-3 px-4 min-w-[160px]'>
                                 {['My Profile', 'Orders', 'Logout'].map((item) => (
                                     <button key={item} 
+                                    onClick={() => {
+                                        if (item === 'Logout') {
+                                            logout();
+                                        } else if (item === 'Orders') {
+                                            navigate('/orders');
+                                        }
+                                    }}
                                         className='w-full text-left px-2 py-2 text-gray-600 hover:bg-gray-50 rounded-md transition-colors'>
                                         {item}
                                     </button>
                                 ))}
                             </div>
-                        </div>
+                        </div> }
+
                     </div>
 
                     <Link to='/cart' className='relative p-2 hover:bg-gray-100 rounded-full transition-colors'>

@@ -3,6 +3,7 @@ import { assets } from "../assets/assets";
 import axios from "axios";
 import { backendUrl } from "../App";
 import { toast } from "react-toastify";
+import '../assets/styles/checkbox.css'
 
 const Add = ({ token }) => {
   // states to store changes
@@ -19,8 +20,6 @@ const Add = ({ token }) => {
   const [subcategory, setSubcategory] = useState("Topwear");
   const [bestseller, setBestseller] = useState(false);
   const [sizes, setSizes] = useState([]);
-
-
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -287,16 +286,20 @@ const Add = ({ token }) => {
       </div>
 
       <div className="flex m-2 gap-2">
-        <input
-          onChange={(e) => setBestseller((prev) => !prev)}
-          checked={bestseller}
-          type="checkbox"
-          name=""
-          id="bestseller"
-        />
-        <label className=" cursor-pointer" htmlFor="bestseller">
-          Bestseller
-        </label>
+        <div className="checkbox-btn">
+          <input
+            onChange={(e) => setBestseller((prev) => !prev)}
+            checked={bestseller}
+            type="checkbox"
+            name="bestseller"
+            id="bestseller"
+            className="absolute opacity-0 cursor-pointer h-0 w-0"
+          />
+          <label htmlFor="bestseller" className="cursor-pointer text-sm">
+            Bestseller
+          </label>
+          <span className="checkmark absolute top-0 left-0 h-6 w-6 border-2 border-white transition-all duration-200"></span>
+        </div>
       </div>
 
       <button

@@ -6,7 +6,6 @@ import {useNavigate} from 'react-router-dom';
 export const ShopContext = createContext();
 
 const ShopContextProvider = (props) => {
-  console.log("Backend URL from env:", import.meta.env.VITE_BACKEND_URL);
   const currency = "$";
   const shopName= "Melli Couture";
   const delivery_fee = 10;
@@ -17,6 +16,7 @@ const ShopContextProvider = (props) => {
   const [cartItems, setCartItems] = useState({});
   const [products,setProducts] = useState([])
   const navigate = useNavigate();
+  const [token,setToken] = useState("")
 
 
   const addToCart = (itemId, size) => {
@@ -87,7 +87,6 @@ const ShopContextProvider = (props) => {
   const getProductsData = async () => {
     try {
       const response = await axios.get(`${backendUrl}/api/product/listProduct`);
-      console.log("API response:", response);
   
       if (response.data.success) {
         setProducts(response.data.products);
@@ -110,6 +109,12 @@ const ShopContextProvider = (props) => {
     getProductsData()
   },[])
 
+  useEffect(()=>{
+    if (!token && localStorage.getItem('token')) {
+      setToken(localStorage.getItem('token'))
+    }
+  },[])
+
 
 
   const value = {
@@ -127,7 +132,9 @@ const ShopContextProvider = (props) => {
     updateQuantity,
     getCartAmount,
     navigate,
-    backendUrl
+    backendUrl,
+    setToken,
+    token
   };
   return (
     <ShopContext.Provider value={value}>{props.children}</ShopContext.Provider>
