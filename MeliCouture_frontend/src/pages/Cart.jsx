@@ -7,25 +7,27 @@ import { Trash2 } from "lucide-react";
 import CartTotal from "../components/CartTotal";
 
 const Card = () => {
-  const { currency, products, cartItems, updateQuantity,navigate } =
+  const { currency, products, cartItems, updateQuantity, navigate } =
     useContext(ShopContext);
   const [cartData, setCartData] = useState([]);
 
   useEffect(() => {
-    const tempData = [];
-    for (const items in cartItems) {
-      for (const item in cartItems[items]) {
-        if (cartItems[items][item] > 0) {
-          tempData.push({
-            _id: items,
-            size: item,
-            quantity: cartItems[items][item],
-          });
+    if (products.length > 0) {
+      const tempData = [];
+      for (const items in cartItems) {
+        for (const item in cartItems[items]) {
+          if (cartItems[items][item] > 0) {
+            tempData.push({
+              _id: items,
+              size: item,
+              quantity: cartItems[items][item],
+            });
+          }
         }
       }
+      setCartData(tempData);
     }
-    setCartData(tempData);
-  }, [cartItems]);
+  }, [cartItems, products]);
 
   return (
     <div className="max-w-4xl mx-auto px-4">
@@ -112,7 +114,8 @@ const Card = () => {
             <CartTotal />
 
             <div className="w-full text-end">
-              <button onClick={()=>navigate('/place-order')}
+              <button
+                onClick={() => navigate("/place-order")}
                 className="group relative bg-black hover:bg-gray-900 text-white text-sm font-medium px-8 py-4 rounded-md 
     shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 overflow-hidden"
               >
